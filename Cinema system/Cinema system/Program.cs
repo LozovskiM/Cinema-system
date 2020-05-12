@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace Cinema_system
+namespace CinemaSystem
 {
     public class Program
     {
@@ -22,5 +16,6 @@ namespace Cinema_system
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
     }
 }

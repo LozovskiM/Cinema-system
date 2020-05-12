@@ -1,12 +1,14 @@
+using CinemaSystem.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Cinema_system
+
+namespace CinemaSystem
 {
     public class Startup
     {
@@ -26,6 +28,10 @@ namespace Cinema_system
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+             services.AddDbContext<CinemaDBContext>(options => {
+                 options.UseSqlServer(Configuration.GetConnectionString("CinemaDBContext"));
+             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
