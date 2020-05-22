@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CinemaSystem.Models
 {
@@ -27,7 +26,7 @@ namespace CinemaSystem.Models
             modelBuilder.Entity<Cinema>(entity =>
             {
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever();
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.City)
                     .IsRequired()

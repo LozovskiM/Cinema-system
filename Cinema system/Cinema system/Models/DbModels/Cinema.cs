@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CinemaSystem.Models
 {
@@ -9,7 +8,6 @@ namespace CinemaSystem.Models
         {
             Halls = new HashSet<Hall>();
         }
-
         public int Id { get; set; }
         public string Title { get; set; }
         public string City { get; set; }
