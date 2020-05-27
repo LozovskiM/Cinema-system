@@ -42,7 +42,12 @@ namespace CinemaSystem.Models
             modelBuilder.Entity<Hall>(entity =>
             {
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever();
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.Cinema)
                     .WithMany(p => p.Halls)
@@ -123,7 +128,7 @@ namespace CinemaSystem.Models
             modelBuilder.Entity<Seat>(entity =>
             {
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever();
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.TypeOfSeat)
                     .IsRequired()

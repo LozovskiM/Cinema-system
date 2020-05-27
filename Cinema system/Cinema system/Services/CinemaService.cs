@@ -1,5 +1,7 @@
 ﻿using CinemaSystem.Interfaces;
 using CinemaSystem.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,12 +17,12 @@ namespace CinemaSystem.Services
             _db = db;
         }
 
-        public bool IsCinemaExists(int cinemaId)
+        public bool CheckCinemaExists(int cinemaId)
         {
             return _db.Cinemas.Any(c => (c.Id == cinemaId && !c.IsDeleted));
         }
 
-        public bool IsCinemaExists(CinemaView cinema)
+        public bool CheckCinemaExists(CinemaView cinema)
         {
             return _db.Cinemas.Any(c => (c.Title == cinema.Title && c.City == cinema.City && !c.IsDeleted));
         }
@@ -78,6 +80,97 @@ namespace CinemaSystem.Services
             var deleteCinema = _db.Cinemas.Find(cinemaId);
 
             deleteCinema.IsDeleted = true;
+
+            _db.SaveChanges();
+        }
+
+        public bool CheckHallExists(int cinemaId, int hallId)
+        {
+            return _db.Halls.Any(h => (h.Id == hallId && h.CinemaId == cinemaId && !h.IsDeleted));
+        }
+
+        public bool CheckHallExists(int cinemaId, HallFullView hall)
+        {
+            return _db.Halls.Any(h => (h.Name == hall.Name && h.CinemaId == cinemaId && !h.IsDeleted));
+        }
+
+        public int CreateHall(int cinemaId, HallFullView hall)
+        {
+            var newHall = new Hall
+            {
+                Id = hall.Id,
+                Name = hall.Name,
+                Seats = hall.Seats
+                    .Select(s => new Seat
+                    {
+                        TypeOfSeat = (SeatType)Enum.Parse(typeof(SeatType), s.TypeOfSeat),
+                        Row = s.Row,
+                        Place = s.Place
+                    })
+                    .ToList()
+            };
+
+            _db.Halls.Add(newHall);
+
+            _db.SaveChanges();
+
+            return newHall.Id;
+        }
+
+        public void EditHall(int hallId, HallFullView hall)
+        {
+            var editHall = _db.Halls
+                .Include(h => h.Seats)
+                .SingleOrDefault(h => h.Id == hallId);
+
+            editHall.Name = hall.Name;
+
+            editHall.Seats = hall.Seats
+                .Select(s => new Seat
+                {
+                    TypeOfSeat = (SeatType)Enum.Parse(typeof(SeatType), s.TypeOfSeat),
+                    Row = s.Row,
+                    Place = s.Place
+                })
+                .ToList();
+
+            _db.SaveChanges();
+        }
+
+        public IEnumerable<HallView> GetHalls(int cinemaId)
+        {
+            return _db.Halls
+                .Where(h => (h.CinemaId == cinemaId && !h.IsDeleted))
+                .Select(h => new HallView
+                {
+                    Id = h.Id,
+                    Name = h.Name,
+                });
+        }
+
+        public HallFullView GetHall(int hallId)
+        {
+            var hall = _db.Halls.Find(hallId);
+
+            return new HallFullView
+            {
+                Id = hall.Id,
+                Name = hall.Name,
+                Seats = hall.Seats
+                    .Select(s => new SeatView
+                    {
+                        TypeOfSeat = s.TypeOfSeat.ToString(),
+                        Row = s.Row,
+                        Place = s.Place
+                    })
+            };
+        }
+
+        public void DeleteHall(int hallId)
+        {
+            var deleteHall = _db.Halls.Find(hallId);
+
+            deleteHall.IsDeleted = true;
 
             _db.SaveChanges();
         }
