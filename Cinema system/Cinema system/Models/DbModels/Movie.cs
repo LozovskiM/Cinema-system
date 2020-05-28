@@ -15,6 +15,7 @@ namespace CinemaSystem.Models
         public DateTime ReleaseDate { get; set; }
         public DateTime EndingDate { get; set; }
         public string Description { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual ICollection<Seance> Seances { get; set; }
     }
