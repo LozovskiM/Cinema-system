@@ -54,5 +54,29 @@ namespace CinemaSystem.Models
             Id = id;
         }
     }
-    
+
+    public class RegistrationResponse : Response
+    {
+        public string Token { get; set; }
+
+        public RegistrationResponse(string token)
+        {
+            IsSuccessful = true;
+            Token = token;
+        }
+    }
+
+    public class LoginResponse : Response
+    {
+        public string UserName { get; set; }
+        public string Token { get; set; }
+
+        public LoginResponse(UserLoginInfo user)
+        {
+            IsSuccessful = true;
+            Token = user.Token;
+            UserName = user.UserName;
+        }
+    }
+
 }

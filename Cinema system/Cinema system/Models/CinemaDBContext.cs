@@ -19,6 +19,7 @@ namespace CinemaSystem.Models
         public virtual DbSet<Seance> Seances { get; set; }
         public virtual DbSet<SeanceSeat> SeanceSeats { get; set; }
         public virtual DbSet<Seat> Seats { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -53,6 +54,12 @@ namespace CinemaSystem.Models
                     .WithMany(p => p.Halls)
                     .HasForeignKey(d => d.CinemaId)
                     .HasConstraintName("FK_Hall_Cinema");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Movie>(entity =>
@@ -91,8 +98,6 @@ namespace CinemaSystem.Models
                     .WithMany()
                     .HasForeignKey(d => d.SeatId)
                     .HasConstraintName("FK_Order_Seat");
-
-
             });
                 
 

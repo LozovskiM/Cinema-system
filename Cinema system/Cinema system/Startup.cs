@@ -3,13 +3,14 @@ using CinemaSystem.Interfaces;
 using CinemaSystem.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace CinemaSystem
 {
@@ -25,6 +26,11 @@ namespace CinemaSystem
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //I'm not sure i understand what to use as a key and issuer/audience
+            const string key = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230";
+
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -32,9 +38,25 @@ namespace CinemaSystem
                 configuration.RootPath = "ClientApp/dist";
             });
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = "CinemaSystemServer",
+                        ValidAudience = "ClientApp",
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        IssuerSigningKey = signingKey
+                    };
+                });
+
             services.AddScoped<ICinemaService, CinemaService>();
             services.AddScoped<IMovieService, MovieService>();
             services.AddScoped<ISeanceService, SeanceService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             services.AddDbContext<CinemaDBContext>(options => {
                  options.UseSqlServer(Configuration.GetConnectionString("CinemaDBContext"));
