@@ -33,6 +33,8 @@ namespace CinemaSystem
             });
 
             services.AddScoped<ICinemaService, CinemaService>();
+            services.AddScoped<IMovieService, MovieService>();
+            services.AddScoped<ISeanceService, SeanceService>();
 
             services.AddDbContext<CinemaDBContext>(options => {
                  options.UseSqlServer(Configuration.GetConnectionString("CinemaDBContext"));

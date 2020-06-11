@@ -126,7 +126,7 @@ namespace CinemaSystem.Controllers
         }
 
         [HttpPost("{cinemaId}/halls")]
-        public IActionResult CreateHall([FromBody] HallFullView hall, int cinemaId)
+        public IActionResult CreateHall([FromBody] HallInfo hall, int cinemaId)
         {
             if (!_сinemaService.CheckCinemaExists(cinemaId))
             {
@@ -151,7 +151,7 @@ namespace CinemaSystem.Controllers
         }
 
         [HttpPut("{cinemaId}/halls/{hallId}")]
-        public IActionResult EditHall([FromBody] HallFullView hall, int cinemaId, int hallId)
+        public IActionResult EditHall([FromBody] HallInfo hall, int cinemaId, int hallId)
         {
             if (!_сinemaService.CheckCinemaExists(cinemaId))
             {

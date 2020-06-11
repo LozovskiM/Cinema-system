@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CinemaSystem.Models
+﻿namespace CinemaSystem.Models
 {
     public partial class Order
     {

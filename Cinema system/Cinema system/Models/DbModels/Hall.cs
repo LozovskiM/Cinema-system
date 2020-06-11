@@ -7,6 +7,7 @@ namespace CinemaSystem.Models
         public Hall()
         {
             Seats = new HashSet<Seat>();
+            Seances = new HashSet<Seance>();
         }
 
         public int Id { get; set; }
@@ -16,5 +17,6 @@ namespace CinemaSystem.Models
 
         public virtual Cinema Cinema { get; set; }
         public virtual ICollection<Seat> Seats { get; set; }
+        public virtual ICollection<Seance> Seances { get; set; }
     }
 }

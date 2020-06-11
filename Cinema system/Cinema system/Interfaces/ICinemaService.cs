@@ -19,18 +19,18 @@ namespace CinemaSystem.Interfaces
 
         bool CheckCinemaExists(CinemaView cinema);
 
-        int CreateHall(int cinemaId, HallFullView hall);
+        int CreateHall(int cinemaId, HallInfo hall);
 
         HallFullView GetHall(int hallId);
 
         IEnumerable<HallView> GetHalls(int cinemaId);
 
-        void EditHall(int hallId, HallFullView hall);
+        void EditHall(int hallId, HallInfo hall);
 
         void DeleteHall(int hallId);
 
         bool CheckHallExists(int cinemaId, int hallId);
 
-        bool CheckHallExists(int cinemaId, HallFullView hall);
+        bool CheckHallExists(int cinemaId, HallInfo hall);
     }
 }

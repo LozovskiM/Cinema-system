@@ -89,16 +89,15 @@ namespace CinemaSystem.Services
             return _db.Halls.Any(h => (h.Id == hallId && h.CinemaId == cinemaId && !h.IsDeleted));
         }
 
-        public bool CheckHallExists(int cinemaId, HallFullView hall)
+        public bool CheckHallExists(int cinemaId, HallInfo hall)
         {
             return _db.Halls.Any(h => (h.Name == hall.Name && h.CinemaId == cinemaId && !h.IsDeleted));
         }
 
-        public int CreateHall(int cinemaId, HallFullView hall)
+        public int CreateHall(int cinemaId, HallInfo hall)
         {
             var newHall = new Hall
             {
-                Id = hall.Id,
                 Name = hall.Name,
                 Seats = hall.Seats
                     .Select(s => new Seat
@@ -117,7 +116,7 @@ namespace CinemaSystem.Services
             return newHall.Id;
         }
 
-        public void EditHall(int hallId, HallFullView hall)
+        public void EditHall(int hallId, HallInfo hall)
         {
             var editHall = _db.Halls
                 .Include(h => h.Seats)
@@ -159,6 +158,7 @@ namespace CinemaSystem.Services
                 Seats = hall.Seats
                     .Select(s => new SeatView
                     {
+                        Id = s.Id,
                         TypeOfSeat = s.TypeOfSeat.ToString(),
                         Row = s.Row,
                         Place = s.Place

@@ -108,6 +108,11 @@ namespace CinemaSystem.Models
                     .WithMany(p => p.Seances)
                     .HasForeignKey(d => d.MovieId)
                     .HasConstraintName("FK_Seance_Movie");
+
+                entity.HasOne(d => d.Hall)
+                    .WithMany(p => p.Seances)
+                    .HasForeignKey(d => d.HallId)
+                    .HasConstraintName("FK_Seances_Hall");
             });
 
             modelBuilder.Entity<SeanceSeat>(entity =>
