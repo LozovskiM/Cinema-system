@@ -14,12 +14,10 @@ namespace CinemaSystem.Services
     public class AuthenticationService : IAuthenticationService
     {
         private readonly CinemaDBContext _db;
-        private readonly IConfiguration _config;
 
-        public AuthenticationService(IConfiguration config, CinemaDBContext db)
+        public AuthenticationService(CinemaDBContext db)
         {
             _db = db;
-            _config = config;
         }
 
         public bool CheckUserExists(string email)
