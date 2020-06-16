@@ -55,17 +55,6 @@ namespace CinemaSystem.Models
         }
     }
 
-    public class RegistrationResponse : Response
-    {
-        public string Token { get; set; }
-
-        public RegistrationResponse(string token)
-        {
-            IsSuccessful = true;
-            Token = token;
-        }
-    }
-
     public class LoginResponse : Response
     {
         public string UserName { get; set; }
@@ -76,6 +65,12 @@ namespace CinemaSystem.Models
             IsSuccessful = true;
             Token = user.Token;
             UserName = user.UserName;
+        }
+
+        public LoginResponse(string token)
+        {
+            IsSuccessful = true;
+            Token = token;
         }
     }
 

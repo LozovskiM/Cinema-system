@@ -26,10 +26,7 @@ namespace CinemaSystem
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //I'm not sure i understand what to use as a key and issuer/audience
-            const string key = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230";
-
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Key"]));
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory

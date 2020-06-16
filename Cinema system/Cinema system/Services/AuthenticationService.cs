@@ -5,14 +5,16 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace CinemaSystem.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
+        private readonly IConfiguration _config;
         private readonly CinemaDBContext _db;
 
         public AuthenticationService(CinemaDBContext db)
@@ -20,14 +22,14 @@ namespace CinemaSystem.Services
             _db = db;
         }
 
-        public bool CheckUserExists(string email)
+        public User FindUser (string email)
         {
-            return _db.Users.Any(u => u.Email == email);
+            return _db.Users.FirstOrDefault(u => u.Email == email);
         }
 
-        public bool CheckCorrectPassword(LoginInfo user)
+        public bool CheckCorrectPassword(LoginInfo user, User findUser)
         {
-            return user.Password == _db.Users.FirstOrDefault(u => u.Email == user.Email).Password;
+            return EncryptPassword(user.Password) == findUser.Password;
         }
 
         public bool CheckUserNameUsed(string userName)
@@ -37,23 +39,37 @@ namespace CinemaSystem.Services
 
         public bool CheckCorrectEmail(string email)
         {
-            return Regex.IsMatch(email,
-                @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
-                @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-0-9a-z]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$",
-                RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+            try
+            {
+                MailAddress m = new MailAddress(email);
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
 
-        private string GenerateToken(string userEmail)
+        private string EncryptPassword (string password)
         {
-            //I'm not sure i understand what to use as a key and issuer/audience
-            const string key = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230";
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            using var sha256 = SHA256.Create();
+
+            var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+            var hash = BitConverter.ToString(hashedBytes).ToLower();
+
+            return hash;
+        }
+
+        private string GenerateToken(User findUser)
+        {
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Key"]));
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
             Claim[] claims = new[] {
-                new Claim(ClaimTypes.Name, userEmail),
-                new Claim(ClaimTypes.Role, _db.Users.FirstOrDefault(u => u.Email == userEmail).Role),
-                new Claim(ClaimTypes.NameIdentifier, _db.Users.FirstOrDefault(u => u.Email == userEmail).Id.ToString())
+                new Claim(ClaimTypes.Name, findUser.Email),
+                new Claim(ClaimTypes.Role, findUser.Role),
+                new Claim(ClaimTypes.NameIdentifier, findUser.Id.ToString())
             };
 
             var token = new JwtSecurityToken(
@@ -69,30 +85,32 @@ namespace CinemaSystem.Services
             return jwtToken;
         }
 
-        public UserLoginInfo LoginUser(LoginInfo user)
+        public UserLoginInfo LoginUser(User findUser)
         {
             return new UserLoginInfo
             {
-                UserName = _db.Users.FirstOrDefault(u => u.Email == user.Email).UserName,
-                Token = GenerateToken(user.Email)
+                UserName = findUser.UserName,
+                Token = GenerateToken(findUser)
             };
         }
 
         public string RegisterUser(RegistrationInfo user)
         {
-            _db.Users.Add(new User
+            var newUser = new User
             {
                 Email = user.Email,
-                Password = user.Password,
+                Password = EncryptPassword(user.Password),
                 Role = "user",
                 UserName = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName
-            });
+            };
+
+            _db.Users.Add(newUser);
 
             _db.SaveChanges();
 
-            string Token = GenerateToken(user.Email);
+            string Token = GenerateToken(newUser);
 
             return Token;
         }

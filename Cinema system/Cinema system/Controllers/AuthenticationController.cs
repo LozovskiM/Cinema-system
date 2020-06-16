@@ -34,17 +34,19 @@ namespace CinemaSystem.Controllers
                 return BadRequest(new Response(ErrorOfEmail));
             }
 
-            if (!_authorizationService.CheckUserExists(user.Email))
+            var findUser = _authorizationService.FindUser(user.Email);      
+
+            if (findUser == null)
             {
                 return BadRequest(new Response(ErrorOfUserNonexisting));
             }
 
-            if (!_authorizationService.CheckCorrectPassword(user))
+            if (!_authorizationService.CheckCorrectPassword(user,findUser))
             {
                 return BadRequest(new Response(ErrorOfUserPasword));
             }
 
-            UserLoginInfo loginInfo = _authorizationService.LoginUser(user);
+            UserLoginInfo loginInfo = _authorizationService.LoginUser(findUser);
 
             return Ok(new LoginResponse(loginInfo));
         }
@@ -62,7 +64,9 @@ namespace CinemaSystem.Controllers
                 return BadRequest(new Response(ErrorOfEmail));
             }
 
-            if (_authorizationService.CheckUserExists(user.Email))
+            var findUser = _authorizationService.FindUser(user.Email);
+
+            if (findUser != null)
             {
                 return BadRequest(new Response(ErrorOfUserExisting));
             }
@@ -74,7 +78,7 @@ namespace CinemaSystem.Controllers
 
             string token = _authorizationService.RegisterUser(user);
 
-            return Ok(new RegistrationResponse(token));
+            return Ok(new LoginResponse(token));
         }
     }
 }

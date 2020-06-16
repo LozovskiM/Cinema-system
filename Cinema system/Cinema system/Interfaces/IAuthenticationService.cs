@@ -4,11 +4,11 @@ namespace CinemaSystem.Interfaces
 {
     public interface IAuthenticationService
     {
-        bool CheckUserExists(string email);
-        bool CheckCorrectPassword(LoginInfo user);
+        User FindUser(string email);
+        bool CheckCorrectPassword(LoginInfo user, User findUser);
         bool CheckUserNameUsed(string userName);
         bool CheckCorrectEmail(string email);
-        UserLoginInfo LoginUser(LoginInfo user);
+        UserLoginInfo LoginUser(User findUser);
         string RegisterUser(RegistrationInfo user);
     }
 }
