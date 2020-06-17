@@ -67,10 +67,11 @@ namespace CinemaSystem.Models
             UserName = user.UserName;
         }
 
-        public LoginResponse(string token)
+        public LoginResponse(string token, string userName)
         {
             IsSuccessful = true;
             Token = token;
+            UserName = userName;
         }
     }
 

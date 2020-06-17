@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -37,19 +36,6 @@ namespace CinemaSystem.Services
             return _db.Users.Any(u => u.UserName == userName);
         }
 
-        public bool CheckCorrectEmail(string email)
-        {
-            try
-            {
-                MailAddress m = new MailAddress(email);
-                return true;
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
-        }
-
         private string EncryptPassword (string password)
         {
             using var sha256 = SHA256.Create();
@@ -63,7 +49,7 @@ namespace CinemaSystem.Services
 
         private string GenerateToken(User findUser)
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Key"]));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
             Claim[] claims = new[] {
