@@ -14,15 +14,11 @@ namespace CinemaSystem.Services
             _db = db;
         }
 
-        public bool CheckUserExists(int userId)
-        {
-            return _db.Users.Any(u => u.Id == userId);
-        }
-
         public Order FindOrder(int userId, int orderId)
         {
             return _db.Orders.FirstOrDefault(o => (o.Id == orderId && o.UserId == userId && !o.IsDeleted));
         }
+
         public bool CheckSeatBooked(OrderInfo order)
         {
             return _db.SeanceSeats.Any(s => (!s.IsBooked && s.SeanceId == order.SeanceId && s.SeatId == order.SeatId));

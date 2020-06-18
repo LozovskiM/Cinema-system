@@ -5,7 +5,6 @@ namespace CinemaSystem.Interfaces
 {
     public interface IOrderService
     {
-        bool CheckUserExists(int userId);
         Order FindOrder(int userId, int orderId);
         bool CheckSeatBooked(OrderInfo order);
         bool CheckSeanceExists(OrderInfo order);

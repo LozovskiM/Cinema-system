@@ -12,7 +12,6 @@ namespace CinemaSystem.Controllers
 
         private readonly IOrderService _orderService;
 
-        private const string ErrorOfUserNonexistence = "This user does not exists.";
         private const string ErrorOfOrderNonexistence = "This order does not exists.";
         private const string ErrorOfSeanceNonexistence = "This seance does not exists.";
         private const string ErrorOfSeatBooked = "This seat does not exists or has already booked";
@@ -22,27 +21,17 @@ namespace CinemaSystem.Controllers
             _orderService = orderService;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("users/{userId}/orders")]
         public IActionResult GetOrders(int userId)
         {
-            if (!_orderService.CheckUserExists(userId))
-            {
-                return NotFound(new Response(ErrorOfUserNonexistence));
-            }
-
             var orders = _orderService.GetOrders(userId);
 
             return Ok(new GetResponse<IEnumerable<OrderView>>(orders));
         }
 
-        [HttpGet("{userId}/user/{orderId}")]
+        [HttpGet("users/{userId}/orders/{orderId}")]
         public IActionResult GetOrder(int userId, int orderId)
         {
-            if (!_orderService.CheckUserExists(userId))
-            {
-                return NotFound(new Response(ErrorOfUserNonexistence));
-            }
-
             var findOrder = _orderService.FindOrder(userId, orderId);
 
             if (findOrder == null)
@@ -55,14 +44,9 @@ namespace CinemaSystem.Controllers
             return Ok(new GetResponse<OrderFullView>(order));
         }
 
-        [HttpPost("{userId}/user")]
+        [HttpPost("users{userId}/orders")]
         public IActionResult CreateOrder([FromBody] OrderInfo order, int userId)
         {
-            if (!_orderService.CheckUserExists(userId))
-            {
-                return NotFound(new Response(ErrorOfUserNonexistence));
-            }
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(new Response(ModelState));
@@ -85,14 +69,9 @@ namespace CinemaSystem.Controllers
             return CreatedAtAction(nameof(GetOrder), new { userId, orderId = response.Id }, response);
         }
 
-        [HttpDelete("{userId}/user/{orderId}")]
+        [HttpDelete("users/{userId}/orders/{orderId}")]
         public IActionResult DeleteOrder(int userId, int orderId)
         {
-            if (!_orderService.CheckUserExists(userId))
-            {
-                return NotFound(new Response(ErrorOfUserNonexistence));
-            }
-
             var findOrder = _orderService.FindOrder(userId, orderId);
 
             if (findOrder == null)

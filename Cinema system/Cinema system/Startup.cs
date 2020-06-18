@@ -53,6 +53,7 @@ namespace CinemaSystem
             services.AddScoped<ICinemaService, CinemaService>();
             services.AddScoped<IMovieService, MovieService>();
             services.AddScoped<ISeanceService, SeanceService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             services.AddDbContext<CinemaDBContext>(options => {
