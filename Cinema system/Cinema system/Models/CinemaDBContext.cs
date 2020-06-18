@@ -65,7 +65,7 @@ namespace CinemaSystem.Models
             modelBuilder.Entity<Movie>(entity =>
             {
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever();
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Description)
                     .IsRequired()
@@ -87,7 +87,7 @@ namespace CinemaSystem.Models
             modelBuilder.Entity<Order>(entity =>
             {
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever();
+                    .ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.Seance)
                     .WithMany(p => p.Orders)
@@ -104,7 +104,7 @@ namespace CinemaSystem.Models
             modelBuilder.Entity<Seance>(entity =>
             {
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever();
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.ShowDate)
                     .HasColumnType("datetime");
